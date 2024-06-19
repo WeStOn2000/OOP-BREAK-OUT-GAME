@@ -93,13 +93,14 @@ const config = {
      this.scene.pause();
      gameOverText.setVisible(true);
   }
-//const activeBrickCount = brickGroups.reduce((acc, brickGroup) => acc + brickGroup.countActive(), 0);
+const activeBrickCount = brickGroups.reduce((acc, brickGroup) => acc + brickGroup.countActive(), 0);
 
-/*if(activeBrickCount === 26){
+if(activeBrickCount === 0){
     YouWinText.setVisible(true);
     this.scene.pause();
-}*/
+
 }
+  }
  
 function hitBrick(_ball,brick){
     if(ball.body.velocity.x === 0){
@@ -107,3 +108,4 @@ function hitBrick(_ball,brick){
     }
 brick.destroy();
 }
+  
