@@ -1,0 +1,4 @@
+Hi there 👋. Here's a little documentation to help you better understand my project file structure.
+
+
+I developed a classic Breakout game using Phaser as the game engine, leveraging its robust physics system to create an engaging gaming experience. In this game, players use the space button to launch the ball, which then bounces off the walls and paddle to break bricks positioned at the top of the screen. The paddle is controlled using the right and left arrow keys on the keyboard, allowing players to navigate and keep the ball in play. With Phaser's physics capabilities, the ball's movement and collision with bricks, walls, and the paddle are smooth and realistic, providing a satisfying game play experience. Try your hand at breaking all the bricks...ENJOY!!
