@@ -15,6 +15,7 @@ const config = {
         default: 'arcade',
         arcade:{
             gravity:false,
+            
         }
     }
   }
@@ -28,14 +29,20 @@ const config = {
   let gameOverText;
   let YouWinText;
   let brickGroups;
+  let pingBrick;
+  let startText;
 
 
   const BALL_SPEED = 400;
+  const PADDLE_SPEED = 300;
 
   function preload(){
     this.load.image('paddle', 'assets/paddle.png');
     this.load.image('ball', 'assets/ball.png');
     this.load.image('brick', 'assets/brick.png');
+    this.load.audio('ping_paddle','assets/ping_paddle.mp3');
+    this.load.audio('ping_brick','assets/ping_brick.mp3');
+    this.load.audio('ping_wall','assets/ping_wall.mp3');
   }
   function create(){
     const{width: screenWidth , height : screenHeight} = config;
@@ -48,10 +55,16 @@ const config = {
     keys = this.input.keyboard.createCursorKeys();
     
     ball = this.physics.add.image(screenWidth / 2, screenHeight -90, 'ball');
-   ball.setCollideWorldBounds();
+   ball.setCollideWorldBounds(true,1,1,true);
    ball.setBounce(1);
-   this.physics.add.collider(ball,paddle);
+
+  const pingPaddle = this.sound.add('ping_paddle');
+    pingBrick = this.sound.add('ping_brick');
+  const pingWall = this.sound.add('ping_wall');
+
+   this.physics.add.collider(ball,paddle,() => pingPaddle.play());
    this.physics.world.checkCollision.down = false;
+   this.physics.world.on('worldbounds', () => {pingWall.play()});
    brickGroups = brickGroupYValues.map((yValue) => { 
     const brickGroup = this.physics.add.group({
         key:'brick',
@@ -74,22 +87,36 @@ const config = {
    YouWinText = this.add.text(screenWidth / 2, screenHeight /2, "You Win!!",{ fontSize: '50px'})
    YouWinText.setOrigin(); 
    YouWinText.setVisible(false);
+
+   startText = this.add.text(
+    screenHeight / 1.1 ,
+    screenWidth / 3,
+    'Use ⬅️ and ➡️ to move paddle\nPress SPACE to start game!!!',
+    {
+      fontSize :'30px',
+      alignText : 'Centre',
+      lineSpacing: 10,
+    }
+   );
+   startText.setOrigin();
   }
   function update(){
+    paddle.setVelocityX(0);
     if(keys.left.isDown){
-     paddle.x = paddle.x -5
+    paddle.setVelocityX(-PADDLE_SPEED);
     }
     if(keys.right.isDown){
-     paddle.x = paddle.x +5
+      paddle.setVelocityX(PADDLE_SPEED);
     }
     if(!hasBallLaunched){
         ball.x = paddle.x;
         if(keys.space.isDown){
+          startText.setVisible(false);
     ball.setVelocityY(-BALL_SPEED);
     hasBallLaunched = true;
         }
   }
-  if(ball.body.y > paddle.body.y){
+  if(ball.body.y > this.physics.world.bounds.bottom){
      this.scene.pause();
      gameOverText.setVisible(true);
   }
@@ -106,6 +133,7 @@ function hitBrick(_ball,brick){
     if(ball.body.velocity.x === 0){
         ball.setVelocityX(150);
     }
+    pingBrick.play();
 brick.destroy();
 }
   
